@@ -1,5 +1,7 @@
 # CoreUI Modal
 
+**[DEMO](https://shabuninil.github.io/coreui-modal)**
+
 
 ### Install with NPM
 
