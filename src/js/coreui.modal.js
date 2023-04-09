@@ -20,14 +20,21 @@ CoreUI.modal = {
             ? '<div class="modal-footer">' + options.footer + '</div>'
             : '';
 
-        let uniqueId = this._hashCode();
+        let size = options.hasOwnProperty('size') && typeof options.size === "string"
+            ? (options.size ? 'modal-' + options.size : '')
+            : 'modal-lg';
+
+        let uniqueId = options.hasOwnProperty('id') && typeof options.id === "string"
+            ? options.id
+            : this._hashCode();
+
         let tpl =
             '<div class="modal fade" tabindex="-1" id="modal-' + uniqueId + '">' +
-              '<div class="modal-dialog modal-lg">' +
+              '<div class="modal-dialog ' + size + '">' +
                 '<div class="modal-content">' +
                   '<div class="modal-header">' +
                     '<h5 class="modal-title">' + title + '</h5>' +
-                    '<button type="button" class="btn-close" data-mdb-dismiss="modal"></button>' +
+                    '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
                   '</div>' +
                   '<div class="modal-body">' +
                     body +
@@ -40,40 +47,35 @@ CoreUI.modal = {
 
         $('body').append(tpl);
         let modalElement   = document.getElementById('modal-' + uniqueId);
-        this._currentModal = new mdb.Modal(modalElement, {
-            backdrop: true
+        this._currentModal = new bootstrap.Modal(modalElement, {
+            backdrop: true,
         })
 
 
-        modalElement.addEventListener('hide.mdb.modal', function (e) {
-            if (options.hasOwnProperty('onHide') && typeof options.onHide === 'function') {
-                options.onHide(e);
-            }
-        });
-        modalElement.addEventListener('hidden.mdb.modal', function (e) {
-            modalElement.remove();
-
-            if (options.hasOwnProperty('onHidden') && typeof options.onHidden === 'function') {
-                options.onHidden(e);
-            }
-        });
-
-        modalElement.addEventListener('show.mdb.modal', function (e) {
+        modalElement.addEventListener('show.bs.modal', function (e) {
             if (options.hasOwnProperty('onShow') && typeof options.onShow === 'function') {
                 options.onShow(e);
             }
         });
 
-        modalElement.addEventListener('shown.mdb.modal', function (e) {
+        modalElement.addEventListener('shown.bs.modal', function (e) {
             if (options.hasOwnProperty('onShown') && typeof options.onShown === 'function') {
                 options.onShown(e);
             }
         });
 
-        modalElement.addEventListener('hidePrevented.mdb.modal', function (e) {
-            if (options.hasOwnProperty('onHidePrevented') && typeof options.onHidePrevented === 'function') {
-                options.onHidePrevented(e);
+        modalElement.addEventListener('hide.bs.modal', function (e) {
+            if (options.hasOwnProperty('onHide') && typeof options.onHide === 'function') {
+                options.onHide(e);
             }
+        });
+        modalElement.addEventListener('hidden.bs.modal', function (e) {
+            modalElement.remove();
+
+            if (options.hasOwnProperty('onHidden') && typeof options.onHidden === 'function') {
+                options.onHidden(e);
+            }
+
         });
 
         this._currentModal.show();
@@ -95,17 +97,33 @@ CoreUI.modal = {
 
 
     /**
-     * @returns {number}
+     * @returns {string}
      * @private
      */
     _hashCode: function() {
+        return this._crc32((new Date().getTime() + Math.random()).toString()).toString(16);
+    },
 
-        let string = 'A' + new Date().getTime();
 
-        for (var h = 0, i = 0; i < string.length; h &= h) {
-            h = 31 * h + string.charCodeAt(i++);
+    /**
+     * @param str
+     * @returns {number}
+     * @private
+     */
+    _crc32: function (str) {
+
+        for (var a, o = [], c = 0; c < 256; c++) {
+            a = c;
+            for (var f = 0; f < 8; f++) {
+                a = 1 & a ? 3988292384 ^ a >>> 1 : a >>> 1
+            }
+            o[c] = a
         }
 
-        return Math.abs(h);
+        for (var n = -1, t = 0; t < str.length; t++) {
+            n = n >>> 8 ^ o[255 & (n ^ str.charCodeAt(t))]
+        }
+
+        return (-1 ^ n) >>> 0;
     }
 }
