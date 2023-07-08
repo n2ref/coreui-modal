@@ -1,0 +1,18 @@
+<div class="modal fade" id="coreui-modal-<%= modal.id %>">
+    <div class="modal-dialog <% if (modal.size) { %>modal-<%= modal.size %><% } %>">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><%- modal.title %></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <%- body %>
+            </div>
+            <% if (modal.footer) { %>
+            <div class="modal-footer">
+                <%- modal.footer %>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>

@@ -3,7 +3,46 @@ var CoreUI = typeof CoreUI !== 'undefined' ? CoreUI : {};
 
 CoreUI.modal = {
 
-    _currentModal: null,
+    lang: {},
+    _instances: {},
+    _settings: {
+        lang: 'en'
+    },
+
+    /**
+     * @param {object} options
+     * @returns {CoreUI.modal.instance}
+     */
+    create: function (options) {
+
+        let instance = $.extend(true, {}, this.instance);
+        instance._init(options instanceof Object ? options : {});
+
+        let layoutId = instance.getId();
+        this._instances[layoutId] = instance;
+
+        return instance;
+    },
+
+
+    /**
+     * @param {string} id
+     * @returns {CoreUI.modal.instance|null}
+     */
+    get: function (id) {
+
+        if ( ! this._instances.hasOwnProperty(id)) {
+            return null;
+        }
+
+        if ($('#coreui-modal-' + this._instances[id])[0]) {
+            delete this._instances[id];
+            return null;
+        }
+
+        return this._instances[id];
+    },
+
 
     /**
      * @param title
@@ -13,117 +52,152 @@ CoreUI.modal = {
      */
     show: function (title, body, options) {
 
-        body    = typeof body === "string" ? body : '';
-        options = typeof options === 'object' ? options : {};
+        options = typeof options === 'object' && ! Array.isArray(options) && options !== null
+                  ? options
+                  : {};
 
-        let tplFooter = options.hasOwnProperty('footer') && typeof options.footer === "string"
-            ? '<div class="modal-footer">' + options.footer + '</div>'
-            : '';
-
-        let size = options.hasOwnProperty('size') && typeof options.size === "string"
-            ? (options.size ? 'modal-' + options.size : '')
-            : 'modal-lg';
-
-        let uniqueId = options.hasOwnProperty('id') && typeof options.id === "string"
-            ? options.id
-            : this._hashCode();
-
-        let tpl =
-            '<div class="modal fade" tabindex="-1" id="modal-' + uniqueId + '">' +
-              '<div class="modal-dialog ' + size + '">' +
-                '<div class="modal-content">' +
-                  '<div class="modal-header">' +
-                    '<h5 class="modal-title">' + title + '</h5>' +
-                    '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
-                  '</div>' +
-                  '<div class="modal-body">' +
-                    body +
-                  '</div>' +
-                  tplFooter +
-                '</div>' +
-              '</div>' +
-            '</div>';
-
-
-        $('body').append(tpl);
-        let modalElement   = document.getElementById('modal-' + uniqueId);
-        this._currentModal = new bootstrap.Modal(modalElement, {
-            backdrop: true,
-        })
-
-
-        modalElement.addEventListener('show.bs.modal', function (e) {
-            if (options.hasOwnProperty('onShow') && typeof options.onShow === 'function') {
-                options.onShow(e);
-            }
+        options = $.extend(true, {}, options, {
+            title : title,
+            body : body,
         });
 
-        modalElement.addEventListener('shown.bs.modal', function (e) {
-            if (options.hasOwnProperty('onShown') && typeof options.onShown === 'function') {
-                options.onShown(e);
-            }
-        });
+        let modal = this.create(options);
 
-        modalElement.addEventListener('hide.bs.modal', function (e) {
-            if (options.hasOwnProperty('onHide') && typeof options.onHide === 'function') {
-                options.onHide(e);
-            }
-        });
-        modalElement.addEventListener('hidden.bs.modal', function (e) {
-            modalElement.remove();
+        if (typeof options.onShow === 'function') {
+            modal.on('show.coreui.modal', options.onShow);
+        }
 
-            if (options.hasOwnProperty('onHidden') && typeof options.onHidden === 'function') {
-                options.onHidden(e);
-            }
+        if (typeof options.onShown === 'function') {
+            modal.on('shown.coreui.modal', options.onShown);
+        }
 
-        });
+        if (typeof options.onHide === 'function') {
+            modal.on('hide.coreui.modal', options.onHide);
+        }
 
-        this._currentModal.show();
+        if (typeof options.onHidden === 'function') {
+            modal.on('hidden.coreui.modal', options.onHidden);
+        }
 
-        return modalElement;
+        return modal.show();
     },
 
 
     /**
-     *
+     * @param title
+     * @param url
+     * @param options
+     * @returns {HTMLElement}
      */
-    hide: function () {
+    showLoad: function (title, url, options) {
 
-        if (this._currentModal) {
-            this._currentModal.hide();
-            this._currentModal = null;
+        options = typeof options === 'object' && ! Array.isArray(options) && options !== null
+            ? options
+            : {};
+
+        options = $.extend(true, {}, options, {
+            title : title,
+            loadUrl : url,
+        });
+
+        let modal = this.create(options);
+
+        if (typeof options.onShow === 'function') {
+            modal.on('show.coreui.modal', options.onShow);
         }
+
+        if (typeof options.onShown === 'function') {
+            modal.on('shown.coreui.modal', options.onShown);
+        }
+
+        if (typeof options.onHide === 'function') {
+            modal.on('hide.coreui.modal', options.onHide);
+        }
+
+        if (typeof options.onHidden === 'function') {
+            modal.on('hidden.coreui.modal', options.onHidden);
+        }
+
+
+        return modal.show();
     },
 
 
     /**
-     * @returns {string}
-     * @private
+     * Скрытие последнего открытого модала
+     * @param {function} callback
      */
-    _hashCode: function() {
-        return this._crc32((new Date().getTime() + Math.random()).toString()).toString(16);
-    },
+    hideLast: function (callback) {
 
+        let instances = this._instances.reverse();
 
-    /**
-     * @param str
-     * @returns {number}
-     * @private
-     */
-    _crc32: function (str) {
+        $.each(instances, function (key, instance) {
+            let modalElement = document.getElementById('coreui-modal-' + instance.getId());
 
-        for (var a, o = [], c = 0; c < 256; c++) {
-            a = c;
-            for (var f = 0; f < 8; f++) {
-                a = 1 & a ? 3988292384 ^ a >>> 1 : a >>> 1
+            if (modalElement) {
+                if (typeof callback === 'function') {
+                    instance.on('hidden.coreui.modal', callback);
+                }
+
+                instance.hide();
+                return false;
             }
-            o[c] = a
+        });
+    },
+
+
+    /**
+     * Скрытие всех открытых модалов
+     * @param {function} callback
+     */
+    hideAll: function (callback) {
+
+        if (typeof callback === 'function') {
+            $.each(this._instances, function (key, instance) {
+                let modalElement = document.getElementById('coreui-modal-' + instance.getId());
+
+                if (modalElement) {
+                    instance.on('hidden.coreui.modal', callback);
+                    return false;
+                }
+            });
         }
 
-        for (var n = -1, t = 0; t < str.length; t++) {
-            n = n >>> 8 ^ o[255 & (n ^ str.charCodeAt(t))]
+
+        let instances = this._instances.reverse();
+
+        $.each(instances, function (key, instance) {
+            let modalElement = document.getElementById('coreui-modal-' + instance.getId());
+
+            if (modalElement) {
+                instance.hide();
+            }
+        });
+    },
+
+
+    /**
+     * Установка настроек
+     * @param {object} settings
+     */
+    setSettings: function(settings) {
+
+        CoreUI.modal._settings = $.extend(this, {}, this._settings, settings);
+    },
+
+
+    /**
+     * Получение значения настройки
+     * @param {string} name
+     */
+    getSetting: function(name) {
+
+        let value = null;
+
+        if (CoreUI.modal._settings.hasOwnProperty(name)) {
+            value = CoreUI.modal._settings[name];
         }
 
-        return (-1 ^ n) >>> 0;
+        return value;
     }
 }
