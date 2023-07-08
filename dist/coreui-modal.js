@@ -305,7 +305,7 @@ CoreUI.modal.instance = {
 
 
     /**
-     * Установка содержимого модала
+     * Загрузка содержимого модала
      * @param {string} url
      */
     loadBodyContent: function (url) {
