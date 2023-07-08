@@ -50,6 +50,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    $('#btn-modal-load').click(function () {
+        CoreUI.modal.showLoad("Title modal", "data/sample.html", {
+            footer: "Footer content",
+            size: "lg"
+        });
+    });
+
 
     // Code highlight
     $('pre code').each(function(i, block) {

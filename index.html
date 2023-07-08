@@ -59,6 +59,7 @@
                                 <ul class="nav">
                                     <li><a href="#example-simple">Simple modal</a></li>
                                     <li><a href="#example-sizes">Sizes</a></li>
+                                    <li><a href="#example-ajax">Ajax</a></li>
                                 </ul>
                             </li>
                             <li><a href="#options">Options</a></li>
@@ -174,6 +175,29 @@
                         </div>
                         <br><br>
 
+
+                        <h3 id="example-ajax">Ajax</h3>
+                        <div>
+                            <div class="content-example">
+                                <button class="btn btn-sm btn-primary" id="btn-modal-load">load</button>
+                            </div>
+                            <div class="content-markup">
+                                <pre><code class="html">
+    &lt;button class="btn btn-sm btn-primary" id="btn-modal-load"&gt;Load&lt;/button&gt;
+
+    &lt;script&gt;
+        $('#btn-modal-load').click(function () {
+            CoreUI.modal.showLoad("Title modal", "data/sample.html", {
+                footer: "Footer content",
+                size: "lg"
+            });
+        });
+    &lt;/script&gt;
+                                </code></pre>
+                            </div>
+                        </div>
+                        <br><br>
+
                     </div>
 
 
@@ -194,12 +218,28 @@
                                 <td>Идентификатор модала. Этот id будет указан вместо уникального значения</td>
                             </tr>
                             <tr>
+                                <th>title</th> <td>string</td> <td></td>
+                                <td>Заголовок модала</td>
+                            </tr>
+                            <tr>
+                                <th>body</th> <td>string</td> <td></td>
+                                <td>Содержимое модала</td>
+                            </tr>
+                            <tr>
                                 <th>footer</th> <td>string</td> <td></td>
                                 <td>Нижнее содержимое модала</td>
                             </tr>
                             <tr>
                                 <th>size</th> <td>string</td> <td><code>lg</code></td>
                                 <td>Размер модального окна. Возможные варианты: <code>fullscreen, xl, lg, sm</code></td>
+                            </tr>
+                            <tr>
+                                <th>lang</th> <td>string</td> <td><code>en</code></td>
+                                <td>Язык фраз</td>
+                            </tr>
+                            <tr>
+                                <th>backdrop</th> <td>string</td> <td><code>false</code></td>
+                                <td>Отмена возможности закрытия модала при нажатии на фон</td>
                             </tr>
                             <tr>
                                 <th>onShow</th> <td>function</td> <td></td>
@@ -223,15 +263,259 @@
 
 
                     <h2 id="methods" class="section-margin">Methods</h2>
-                    <div>
-                        <code>let modalElement = CoreUI.modal.show("Title modal", "Body content", options )</code>
-                        <p>Метод для создания и показа модала. Результатом выполнения будет созданный элемент, содержащий в себе модал</p>
-
-                        <code>CoreUI.modal.hide()</code>
-                        <p>Скрытие последнего открытого модала</p>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered table-striped js-options-table">
+                            <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Return</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">let modal = CoreUI.modal.create( options )</code></pre>
+                                </td>
+                                <td>CoreUI.modal.instance</td>
+                                <td>Метод для создания экземпляра модала</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">let modal = CoreUI.modal.get( modalId )</code></pre>
+                                </td>
+                                <td>CoreUI.modal.instance</td>
+                                <td>Получение ранее созданного экземпляра модала</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">CoreUI.modal.setSettings( settings )</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Установка некоторых настроек по умолчанию для создаваемых модалов
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">CoreUI.modal.getSetting( name )</code></pre>
+                                </td>
+                                <td>mixed</td>
+                                <td>
+                                    Получение значения установленной настройки по умолчанию для создаваемых модалов
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">CoreUI.modal.hideLast( callback )</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Скрытие последнего открытого модала
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">CoreUI.modal.hideAll( callback )</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Скрытие всех открытых модалов
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.show( title, body, options )</code></pre>
+                                </td>
+                                <td>HTMLElement</td>
+                                <td>
+                                    Метод для создания и показа модала.
+                                    Результатом выполнения будет созданный элемент, содержащий в себе модал
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.showLoad( title, url, options )</code></pre>
+                                </td>
+                                <td>HTMLElement</td>
+                                <td>
+                                    Метод показывает модал и загружает в него ответ от сервера по указанному адресу.
+                                    Результатом выполнения будет созданный элемент, содержащий в себе модал
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.getId()</code></pre>
+                                </td>
+                                <td>string</td>
+                                <td>
+                                    Получение id модала
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.getOptions()</code></pre>
+                                </td>
+                                <td>object</td>
+                                <td>
+                                    Получение настроек модала
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.setBodyContent( content )</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Замена содержимого тела в модале
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.setTitleContent( content )</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Замена заголовка
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.setFooterContent( content )</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Замена подвала
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.loadBodyContent( url )</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Загрузка содержимого модала
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.hide()</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Скрытие модала
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.getLang()</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Получение настроек языка
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.on( name, callback )</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Регистрация функции вызываемой при наступлении указанного события
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <pre class="m-0 p-0"><code class="js">modal.destruct()</code></pre>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Уничтожение модала
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <br>
-                    <br>
+
+
+                    <h2 id="events" class="section-margin">Events</h2>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered table-striped js-options-table">
+                            <thead>
+                            <tr>
+                                <th>Event Type</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-nowrap">show.coreui.modal</td>
+                                <td>Показ модала на странице. Происходит один раз в начале отображения</td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">shown.coreui.modal</td>
+                                <td>Показ модала на странице. Происходит один раз при отображении</td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">hide.coreui.modal</td>
+                                <td>Скрытие модала на странице. Происходит один раз в начале скрытия</td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">hidden.coreui.modal</td>
+                                <td>Скрытие модала на странице. Происходит один раз при скрытии</td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">change-body.coreui.modal</td>
+                                <td>
+                                    Выполняется каждый раз при изменении содержимого модала.<br>
+                                    В качестве параметров передаются <code>modal.on('change-body.coreui.modal', function ( modal )</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">change-title.coreui.modal</td>
+                                <td>
+                                    Выполняется каждый раз при изменении заголовка модала.<br>
+                                    В качестве параметров передаются <code>modal.on('change-title.coreui.modal', function ( modal )</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">change-footer.coreui.modal</td>
+                                <td>
+                                    Выполняется каждый раз при изменении подвала модала.<br>
+                                    В качестве параметров передаются <code>modal.on('change-footer.coreui.modal', function ( modal )</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">before-load.coreui.modal</td>
+                                <td>
+                                    Выполняется перед началом запроса для получения данных для модала.<br>
+                                    В качестве параметров передаются <code>modal.on('before-load.coreui.modal', function (modal, xhr)</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">success-load.coreui.modal</td>
+                                <td>
+                                    Выполняется после успешного запроса для получения данных для модала.<br>
+                                    В качестве параметров передаются <code>modal.on('success-load.coreui.modal', function (modal, result)</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">error-load.coreui.modal</td>
+                                <td>
+                                    Выполняется после не успешного запроса для получения данных для модала.<br>
+                                    В качестве параметров передаются <code>modal.on('error-load.coreui.modal', function (modal, xhr, textStatus, errorThrown)</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-nowrap">complete-load.coreui.modal</td>
+                                <td>
+                                    Выполняется после запроса для получения данных для модала.<br>
+                                    В качестве параметров передаются <code>modal.on('complete-load.coreui.modal', function (modal, xhr, textStatus)</code>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
