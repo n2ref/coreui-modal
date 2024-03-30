@@ -1,6 +1,6 @@
 # CoreUI Modal
 
-**[DEMO](https://shabuninil.github.io/coreui-modal)**
+**[DEMO](https://n2ref.github.io/coreui-modal)**
 
 
 ### Install with NPM
@@ -32,4 +32,4 @@ CoreUI.modal.show("Title modal", "Body content", {
 
 ```
 
-![Panel](https://raw.githubusercontent.com/shabuninil/coreui-modal/main/preview.png) 
+![Panel](https://raw.githubusercontent.com/n2ref/coreui-modal/main/preview.png) 
