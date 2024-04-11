@@ -362,7 +362,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <pre class="m-0 p-0"><code class="js">modal.setBodyContent( content )</code></pre>
+                                    <pre class="m-0 p-0"><code class="js">modal.setContent( content )</code></pre>
                                 </td>
                                 <td></td>
                                 <td>
@@ -371,7 +371,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <pre class="m-0 p-0"><code class="js">modal.setTitleContent( content )</code></pre>
+                                    <pre class="m-0 p-0"><code class="js">modal.setTitle( content )</code></pre>
                                 </td>
                                 <td></td>
                                 <td>
@@ -380,7 +380,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <pre class="m-0 p-0"><code class="js">modal.setFooterContent( content )</code></pre>
+                                    <pre class="m-0 p-0"><code class="js">modal.setFooter( content )</code></pre>
                                 </td>
                                 <td></td>
                                 <td>
@@ -389,7 +389,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <pre class="m-0 p-0"><code class="js">modal.loadBodyContent( url )</code></pre>
+                                    <pre class="m-0 p-0"><code class="js">modal.loadContent( url )</code></pre>
                                 </td>
                                 <td></td>
                                 <td>
@@ -448,68 +448,68 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td class="text-nowrap">show.coreui.modal</td>
+                                <td class="text-nowrap">modal_show</td>
                                 <td>Показ модала на странице. Происходит один раз в начале отображения</td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">shown.coreui.modal</td>
+                                <td class="text-nowrap">modal_shown</td>
                                 <td>Показ модала на странице. Происходит один раз при отображении</td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">hide.coreui.modal</td>
+                                <td class="text-nowrap">modal_hide</td>
                                 <td>Скрытие модала на странице. Происходит один раз в начале скрытия</td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">hidden.coreui.modal</td>
+                                <td class="text-nowrap">modal_hidden</td>
                                 <td>Скрытие модала на странице. Происходит один раз при скрытии</td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">change-body.coreui.modal</td>
+                                <td class="text-nowrap">content_change</td>
                                 <td>
                                     Выполняется каждый раз при изменении содержимого модала.<br>
-                                    В качестве параметров передаются <code>modal.on('change-body.coreui.modal', function ( modal )</code>
+                                    В качестве параметров передаются <code>modal.on('content_change', function ( modal )</code>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">change-title.coreui.modal</td>
+                                <td class="text-nowrap">title_change</td>
                                 <td>
                                     Выполняется каждый раз при изменении заголовка модала.<br>
-                                    В качестве параметров передаются <code>modal.on('change-title.coreui.modal', function ( modal )</code>
+                                    В качестве параметров передаются <code>modal.on('title_change', function ( modal )</code>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">change-footer.coreui.modal</td>
+                                <td class="text-nowrap">footer_change</td>
                                 <td>
                                     Выполняется каждый раз при изменении подвала модала.<br>
-                                    В качестве параметров передаются <code>modal.on('change-footer.coreui.modal', function ( modal )</code>
+                                    В качестве параметров передаются <code>modal.on('footer_change', function ( modal )</code>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">before-load.coreui.modal</td>
+                                <td class="text-nowrap">content_load_before</td>
                                 <td>
                                     Выполняется перед началом запроса для получения данных для модала.<br>
-                                    В качестве параметров передаются <code>modal.on('before-load.coreui.modal', function (modal, xhr)</code>
+                                    В качестве параметров передаются <code>modal.on('content_load_before', function (modal, xhr)</code>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">success-load.coreui.modal</td>
+                                <td class="text-nowrap">content_load_success</td>
                                 <td>
                                     Выполняется после успешного запроса для получения данных для модала.<br>
-                                    В качестве параметров передаются <code>modal.on('success-load.coreui.modal', function (modal, result)</code>
+                                    В качестве параметров передаются <code>modal.on('content_load_success', function (modal, result)</code>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">error-load.coreui.modal</td>
+                                <td class="text-nowrap">content_load_error</td>
                                 <td>
                                     Выполняется после не успешного запроса для получения данных для модала.<br>
-                                    В качестве параметров передаются <code>modal.on('error-load.coreui.modal', function (modal, xhr, textStatus, errorThrown)</code>
+                                    В качестве параметров передаются <code>modal.on('content_load_error', function (modal, xhr, textStatus, errorThrown)</code>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="text-nowrap">complete-load.coreui.modal</td>
+                                <td class="text-nowrap">content_load_complete</td>
                                 <td>
                                     Выполняется после запроса для получения данных для модала.<br>
-                                    В качестве параметров передаются <code>modal.on('complete-load.coreui.modal', function (modal, xhr, textStatus)</code>
+                                    В качестве параметров передаются <code>modal.on('content_load_complete', function (modal, xhr, textStatus)</code>
                                 </td>
                             </tr>
                             </tbody>
