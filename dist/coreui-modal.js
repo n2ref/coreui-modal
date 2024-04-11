@@ -1100,7 +1100,18 @@
       }, {}, [1])(1);
     });
 
+    let tpl = Object.create(null);
+    tpl['loading.html'] = '<div class="py-4 d-flex justify-content-center align-items-center gap-2"> <div class="spinner-border mr-2"></div> <%= lang.loading %> </div> ';
+    tpl['modal.html'] = '<div class="modal fade" id="coreui-modal-<%= id %>"> <div class="modal-dialog <% if (modal.size) { %>modal-<%= modal.size %><% } %>"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title"><%- modal.title %></h5> <button type="button" class="btn-close" data-bs-dismiss="modal"></button> </div> <div class="modal-body"> <%- body %> </div> <% if (modal.footer) { %> <div class="modal-footer"> <%- modal.footer %> </div> <% } %> </div> </div> </div>';
+
     let coreuiModalUtils = {
+      /**
+       * Проверка на объект
+       * @param value
+       */
+      isObject: function (value) {
+        return typeof value === 'object' && !Array.isArray(value) && value !== null;
+      },
       /**
        * @returns {string}
        * @private
@@ -1127,10 +1138,6 @@
         return (-1 ^ n) >>> 0;
       }
     };
-
-    let tpl = Object.create(null);
-    tpl['loading.html'] = '<div class="py-4 d-flex justify-content-center align-items-center gap-2"> <div class="spinner-border mr-2"></div> <%= lang.loading %> </div> ';
-    tpl['modal.html'] = '<div class="modal fade" id="coreui-modal-<%= modal.id %>"> <div class="modal-dialog <% if (modal.size) { %>modal-<%= modal.size %><% } %>"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title"><%- modal.title %></h5> <button type="button" class="btn-close" data-bs-dismiss="modal"></button> </div> <div class="modal-body"> <%- body %> </div> <% if (modal.footer) { %> <div class="modal-footer"> <%- modal.footer %> </div> <% } %> </div> </div> </div>';
 
     let coreuiModalPrivate = {
       /**
@@ -1179,7 +1186,7 @@
                 if (CoreUI.hasOwnProperty(name) && coreuiModalUtils.isObject(CoreUI[name])) {
                   let instance = CoreUI[name].create(data[i]);
                   result.push(instance.render());
-                  modal.on('shown.coreui.modal', instance.initEvents, instance, true);
+                  modal.on('modal_shown', instance.initEvents, instance, true);
                 } else {
                   result.push(JSON.stringify(data[i]));
                 }
@@ -1216,8 +1223,8 @@
         this._id = this._options.hasOwnProperty('id') && typeof this._options.id === 'string' && this._options.id ? this._options.id : coreuiModalUtils.hashCode();
       },
       /**
-       *
-       * @returns {*}
+       * Получение идентификатора
+       * @returns {string}
        */
       getId: function () {
         return this._id;
@@ -1233,29 +1240,29 @@
        * Установка содержимого модала
        * @param {string} content
        */
-      setBodyContent: function (content) {
+      setContent: function (content) {
         let container = $('#coreui-modal-' + this.getId() + ' .modal-body');
         if (container[0]) {
           container.html(coreuiModalPrivate.renderContent(this, content));
-          coreuiModalPrivate.trigger(this, 'change-body.coreui.modal', this, [this]);
+          coreuiModalPrivate.trigger(this, 'content_change', this, [this]);
         }
       },
       /**
        Установка заголовка модала
        * @param {string} content
        */
-      setTitleContent: function (content) {
+      setTitle: function (content) {
         let container = $('#coreui-modal-' + this.getId() + ' .modal-title');
         if (container[0]) {
           container.html(content);
-          coreuiModalPrivate.trigger(this, 'change-title.coreui.modal', this, [this]);
+          coreuiModalPrivate.trigger(this, 'title_change', this, [this]);
         }
       },
       /**
        Установка подвала модала
        * @param {string} content
        */
-      setFooterContent: function (content) {
+      setFooter: function (content) {
         let container = $('#coreui-modal-' + this.getId());
         if (container[0]) {
           let footer = container.find('.modal-footer');
@@ -1264,14 +1271,14 @@
           } else {
             container.find('.modal-content').append('<div class="modal-footer">' + content + '</div>');
           }
-          coreuiModalPrivate.trigger(this, 'change-footer.coreui.modal', this, [this]);
+          coreuiModalPrivate.trigger(this, 'footer_change', this, [this]);
         }
       },
       /**
        * Загрузка содержимого модала
        * @param {string} url
        */
-      loadBodyContent: function (url) {
+      loadContent: function (url) {
         let that = this;
         let container = $('#coreui-modal-' + this.getId() + ' .modal-body');
         if (container[0]) {
@@ -1283,18 +1290,18 @@
             url: url,
             method: 'GET',
             beforeSend: function (xhr) {
-              coreuiModalPrivate.trigger(that, 'before-load.coreui.modal', that, [that, xhr]);
+              coreuiModalPrivate.trigger(that, 'content_load_before', that, [that, xhr]);
             },
             success: function (result) {
               container.html(coreuiModalPrivate.renderContent(that, result));
-              coreuiModalPrivate.trigger(that, 'success-load.coreui.modal', that, [that, result]);
-              coreuiModalPrivate.trigger(that, 'change-body.coreui.modal', that, [that]);
+              coreuiModalPrivate.trigger(that, 'content_load_success', that, [that, result]);
+              coreuiModalPrivate.trigger(that, 'content_change', that, [that]);
             },
             error: function (xhr, textStatus, errorThrown) {
-              coreuiModalPrivate.trigger(that, 'error-load.coreui.modal', that, [that, xhr, textStatus, errorThrown]);
+              coreuiModalPrivate.trigger(that, 'content_load_error', that, [that, xhr, textStatus, errorThrown]);
             },
             complete: function (xhr, textStatus) {
-              coreuiModalPrivate.trigger(that, 'complete-load.coreui.modal', that, [that, xhr, textStatus]);
+              coreuiModalPrivate.trigger(that, 'content_load_complete', that, [that, xhr, textStatus]);
             }
           });
         }
@@ -1309,32 +1316,32 @@
           return modalElement;
         }
         let html = ejs.render(tpl['modal.html'], {
+          id: this.getId(),
           modal: this._options,
           body: this._options.body ? coreuiModalPrivate.renderContent(this, this._options.body) : ''
         });
         $('body').append(html);
-        console.log(this._options.backdrop);
         modalElement = document.getElementById('coreui-modal-' + this.getId());
         this._modal = new bootstrap.Modal(modalElement, {
           backdrop: this._options.backdrop
         });
         let that = this;
         modalElement.addEventListener('show.bs.modal', function (e) {
-          coreuiModalPrivate.trigger(that, 'show.coreui.modal', that, [that]);
+          coreuiModalPrivate.trigger(that, 'modal_show', that, [that]);
         });
         modalElement.addEventListener('shown.bs.modal', function (e) {
-          coreuiModalPrivate.trigger(that, 'shown.coreui.modal', that, [that]);
+          coreuiModalPrivate.trigger(that, 'modal_shown', that, [that]);
         });
         modalElement.addEventListener('hide.bs.modal', function (e) {
-          coreuiModalPrivate.trigger(that, 'hide.coreui.modal', that, [that]);
+          coreuiModalPrivate.trigger(that, 'modal_hide', that, [that]);
         });
         modalElement.addEventListener('hidden.bs.modal', function (e) {
           modalElement.remove();
-          coreuiModalPrivate.trigger(that, 'hidden.coreui.modal', that, [that]);
+          coreuiModalPrivate.trigger(that, 'modal_hidden', that, [that]);
         });
         this._modal.show();
         if (this._options.loadUrl) {
-          this.loadBodyContent(this._options.loadUrl);
+          this.loadContent(this._options.loadUrl);
         }
         return modalElement;
       },
@@ -1431,16 +1438,16 @@
         });
         let modal = this.create(options);
         if (typeof options.onShow === 'function') {
-          modal.on('show.coreui.modal', options.onShow);
+          modal.on('modal_show', options.onShow);
         }
         if (typeof options.onShown === 'function') {
-          modal.on('shown.coreui.modal', options.onShown);
+          modal.on('modal_shown', options.onShown);
         }
         if (typeof options.onHide === 'function') {
-          modal.on('hide.coreui.modal', options.onHide);
+          modal.on('modal_hide', options.onHide);
         }
         if (typeof options.onHidden === 'function') {
-          modal.on('hidden.coreui.modal', options.onHidden);
+          modal.on('modal_hidden', options.onHidden);
         }
         return modal.show();
       },
@@ -1459,16 +1466,16 @@
         });
         let modal = this.create(options);
         if (typeof options.onShow === 'function') {
-          modal.on('show.coreui.modal', options.onShow);
+          modal.on('modal_show', options.onShow);
         }
         if (typeof options.onShown === 'function') {
-          modal.on('shown.coreui.modal', options.onShown);
+          modal.on('modal_shown', options.onShown);
         }
         if (typeof options.onHide === 'function') {
-          modal.on('hide.coreui.modal', options.onHide);
+          modal.on('modal_hide', options.onHide);
         }
         if (typeof options.onHidden === 'function') {
-          modal.on('hidden.coreui.modal', options.onHidden);
+          modal.on('modal_hidden', options.onHidden);
         }
         return modal.show();
       },
@@ -1482,7 +1489,7 @@
           let modalElement = document.getElementById('coreui-modal-' + instance.getId());
           if (modalElement) {
             if (typeof callback === 'function') {
-              instance.on('hidden.coreui.modal', callback);
+              instance.on('modal_hidden', callback);
             }
             instance.hide();
             return false;
@@ -1498,7 +1505,7 @@
           $.each(this._instances, function (key, instance) {
             let modalElement = document.getElementById('coreui-modal-' + instance.getId());
             if (modalElement) {
-              instance.on('hidden.coreui.modal', callback);
+              instance.on('modal_hidden', callback);
               return false;
             }
           });

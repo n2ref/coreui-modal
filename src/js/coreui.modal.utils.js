@@ -1,6 +1,19 @@
 
 let coreuiModalUtils = {
 
+
+    /**
+     * Проверка на объект
+     * @param value
+     */
+    isObject: function (value) {
+
+        return typeof value === 'object' &&
+            ! Array.isArray(value) &&
+            value !== null;
+    },
+
+
     /**
      * @returns {string}
      * @private
