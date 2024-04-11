@@ -1,26 +1,41 @@
 {
   "name": "coreui-modal",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CoreUI Modal",
   "scripts": {
-    "build_all": "gulp build_tpl && gulp build_dependents && gulp build_js_min && gulp build_js",
+    "build_all": "gulp build_tpl && gulp build_js_min && gulp build_js && npm run test_js",
+
+    "build_tpl": "gulp build_tpl",
+    "build_js": "gulp build_tpl && gulp build_js",
+    "build_js_min": "gulp build_tpl && gulp build_js_min",
+
     "build_watch": "gulp build_watch",
-    "build_dependents": "gulp build_dependents",
-    "test_js": "eslint -c .eslintrc.json --max-warnings 100 --ext .js ./src/js"
+    "build_bootstrap": "gulp build_bootstrap",
+    "test_js": "eslint -c .eslintrc.json --max-warnings 100 --ext .js ./dist"
   },
   "dependencies": {
-    "ejs": "3.1.*"
+    "ejs": "3.1.9"
   },
   "devDependencies": {
-    "gulp": "4.*",
-    "gulp-concat": "2.*",
-    "gulp-sourcemaps": "3.*",
-    "gulp-uglify": "3.0.*",
-    "gulp-htmlmin": "5.0.1",
-    "gulp-html2js": "0.4.2",
-    "gulp-rename": "2.0.0",
+    "gulp": "5.0.0",
+    "gulp-concat": "2.6.1",
+    "gulp-sourcemaps": "3.0.0",
+    "gulp-uglify": "3.0.2",
+    "gulp-sass": "5.1.0",
     "gulp-wrap-file": "0.1.2",
-    "eslint": "8.36.0"
+    "gulp-html-to-js": "0.0.7",
+    "sass": "1.72.0",
+    "@rollup/stream": "3.0.1",
+    "rollup-plugin-sourcemaps": "0.6.3",
+    "@rollup/plugin-babel": "6.0.4",
+    "@rollup/plugin-commonjs": "25.0.7",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "vinyl-source-stream": "2.0.0",
+    "vinyl-buffer": "1.0.1",
+    "@babel/plugin-transform-template-literals": "7.24.1",
+    "@babel/preset-env": "7.24.3",
+    "bootstrap": "5.3.3",
+    "eslint": "8.57.0"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,6 @@
 
-CoreUI.modal.lang.en = {
+import coreuiModal from "../coreui.modal";
+
+coreuiModal.lang.en = {
     "loading": "Loading...",
 }

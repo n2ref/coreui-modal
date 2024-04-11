@@ -1,6 +1,5 @@
 
-CoreUI.modal.utils = {
-
+let coreuiModalUtils = {
 
     /**
      * @returns {string}
@@ -33,3 +32,6 @@ CoreUI.modal.utils = {
         return (-1 ^ n) >>> 0;
     }
 }
+
+
+export default coreuiModalUtils;

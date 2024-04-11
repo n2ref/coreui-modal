@@ -1,7 +1,6 @@
+import coreuiModalInstance from "./coreui.modal.instance";
 
-var CoreUI = typeof CoreUI !== 'undefined' ? CoreUI : {};
-
-CoreUI.modal = {
+let coreuiModal = {
 
     lang: {},
     _instances: {},
@@ -10,12 +9,18 @@ CoreUI.modal = {
     },
 
     /**
+     * Создание экземпляра
      * @param {object} options
-     * @returns {CoreUI.modal.instance}
+     * @returns {object}
      */
     create: function (options) {
 
-        let instance = $.extend(true, {}, this.instance);
+        let instance = $.extend(true, {}, coreuiModalInstance);
+
+        if ( ! options.hasOwnProperty('lang')) {
+            options.lang = this.getSetting('lang');
+        }
+
         instance._init(options instanceof Object ? options : {});
 
         let layoutId = instance.getId();
@@ -26,8 +31,9 @@ CoreUI.modal = {
 
 
     /**
+     * Получение созданного ранее экземпляра
      * @param {string} id
-     * @returns {CoreUI.modal.instance|null}
+     * @returns {object|null}
      */
     get: function (id) {
 
@@ -35,7 +41,7 @@ CoreUI.modal = {
             return null;
         }
 
-        if ($('#coreui-modal-' + this._instances[id])[0]) {
+        if ( ! $('#coreui-modal-' + this._instances[id])[0]) {
             delete this._instances[id];
             return null;
         }
@@ -45,6 +51,7 @@ CoreUI.modal = {
 
 
     /**
+     * Создание и показ модала
      * @param title
      * @param body
      * @param options
@@ -64,19 +71,19 @@ CoreUI.modal = {
         let modal = this.create(options);
 
         if (typeof options.onShow === 'function') {
-            modal.on('show.coreui.modal', options.onShow);
+            modal.on('modal_show', options.onShow);
         }
 
         if (typeof options.onShown === 'function') {
-            modal.on('shown.coreui.modal', options.onShown);
+            modal.on('modal_shown', options.onShown);
         }
 
         if (typeof options.onHide === 'function') {
-            modal.on('hide.coreui.modal', options.onHide);
+            modal.on('modal_hide', options.onHide);
         }
 
         if (typeof options.onHidden === 'function') {
-            modal.on('hidden.coreui.modal', options.onHidden);
+            modal.on('modal_hidden', options.onHidden);
         }
 
         return modal.show();
@@ -84,6 +91,7 @@ CoreUI.modal = {
 
 
     /**
+     * Создание, показ модала и загрузка содержимого по ссылке
      * @param title
      * @param url
      * @param options
@@ -103,19 +111,19 @@ CoreUI.modal = {
         let modal = this.create(options);
 
         if (typeof options.onShow === 'function') {
-            modal.on('show.coreui.modal', options.onShow);
+            modal.on('modal_show', options.onShow);
         }
 
         if (typeof options.onShown === 'function') {
-            modal.on('shown.coreui.modal', options.onShown);
+            modal.on('modal_shown', options.onShown);
         }
 
         if (typeof options.onHide === 'function') {
-            modal.on('hide.coreui.modal', options.onHide);
+            modal.on('modal_hide', options.onHide);
         }
 
         if (typeof options.onHidden === 'function') {
-            modal.on('hidden.coreui.modal', options.onHidden);
+            modal.on('modal_hidden', options.onHidden);
         }
 
 
@@ -136,7 +144,7 @@ CoreUI.modal = {
 
             if (modalElement) {
                 if (typeof callback === 'function') {
-                    instance.on('hidden.coreui.modal', callback);
+                    instance.on('modal_hidden', callback);
                 }
 
                 instance.hide();
@@ -157,7 +165,7 @@ CoreUI.modal = {
                 let modalElement = document.getElementById('coreui-modal-' + instance.getId());
 
                 if (modalElement) {
-                    instance.on('hidden.coreui.modal', callback);
+                    instance.on('modal_hidden', callback);
                     return false;
                 }
             });
@@ -182,7 +190,7 @@ CoreUI.modal = {
      */
     setSettings: function(settings) {
 
-        CoreUI.modal._settings = $.extend(this, {}, this._settings, settings);
+        this._settings = $.extend(this, {}, this._settings, settings);
     },
 
 
@@ -194,10 +202,13 @@ CoreUI.modal = {
 
         let value = null;
 
-        if (CoreUI.modal._settings.hasOwnProperty(name)) {
-            value = CoreUI.modal._settings[name];
+        if (this._settings.hasOwnProperty(name)) {
+            value = this._settings[name];
         }
 
         return value;
     }
 }
+
+
+export default coreuiModal;

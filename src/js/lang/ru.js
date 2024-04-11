@@ -1,4 +1,6 @@
 
-CoreUI.modal.lang.ru = {
+import coreuiModal from "../coreui.modal";
+
+coreuiModal.lang.ru = {
     "loading": "Загрузка...",
 }
