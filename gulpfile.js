@@ -8,6 +8,7 @@ const wrapFile         = require('gulp-wrap-file');
 const rollup           = require('@rollup/stream');
 const rollupSourcemaps = require('rollup-plugin-sourcemaps');
 const rollupBabel      = require('@rollup/plugin-babel');
+const nodeResolve      = require('@rollup/plugin-node-resolve');
 const source           = require('vinyl-source-stream');
 const buffer           = require("vinyl-buffer");
 
@@ -48,6 +49,7 @@ gulp.task('build_js_min', function() {
         },
         context: "window",
         plugins: [
+            nodeResolve(),
             rollupSourcemaps(),
             rollupBabel({babelHelpers: 'bundled'}),
         ]
@@ -70,6 +72,7 @@ gulp.task('build_js_min_fast', function() {
         },
         context: "window",
         plugins: [
+            nodeResolve(),
             rollupBabel({babelHelpers: 'bundled'}),
         ]
     })
@@ -88,6 +91,7 @@ gulp.task('build_js', function() {
         },
         context: "window",
         plugins: [
+            nodeResolve(),
             rollupBabel({babelHelpers: 'bundled'}),
         ]
     })
@@ -113,7 +117,7 @@ gulp.task('build_tpl', function() {
 gulp.task('build_bootstrap', function() {
     return gulp.src(conf.css_bootstrap.main)
         .pipe(sourcemaps.init())
-        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(sass({includePaths: ['node_modules'], outputStyle: 'compressed'}).on('error', sass.logError))
         .pipe(concat(conf.css_bootstrap.fileMin))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(conf.dist));

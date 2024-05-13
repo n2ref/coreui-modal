@@ -1,5 +1,5 @@
 
-import '../../node_modules/ejs/ejs.min';
+import 'ejs/ejs.min';
 import coreuiModal        from "./coreui.modal";
 import coreuiModalTpl     from "./coreui.modal.templates";
 import coreuiModalUtils   from "./coreui.modal.utils";
