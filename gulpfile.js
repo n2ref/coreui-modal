@@ -47,6 +47,12 @@ gulp.task('build_js_min', function() {
             format: 'umd',
             name: "CoreUI.modal"
         },
+        onwarn: function (log, handler) {
+            if (log.code === 'CIRCULAR_DEPENDENCY') {
+                return; // Ignore circular dependency warnings
+            }
+            handler(log.message);
+        },
         context: "window",
         plugins: [
             nodeResolve(),
@@ -70,6 +76,12 @@ gulp.task('build_js_min_fast', function() {
             format: 'umd',
             name: "CoreUI.modal"
         },
+        onwarn: function (log, handler) {
+            if (log.code === 'CIRCULAR_DEPENDENCY') {
+                return; // Ignore circular dependency warnings
+            }
+            handler(log.message);
+        },
         context: "window",
         plugins: [
             nodeResolve(),
@@ -88,6 +100,12 @@ gulp.task('build_js', function() {
             sourcemap: false,
             format: 'umd',
             name: "CoreUI.modal"
+        },
+        onwarn: function (log, handler) {
+            if (log.code === 'CIRCULAR_DEPENDENCY') {
+                return; // Ignore circular dependency warnings
+            }
+            handler(log.message);
         },
         context: "window",
         plugins: [
