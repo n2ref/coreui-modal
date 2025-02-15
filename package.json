@@ -1,6 +1,6 @@
 {
   "name": "coreui-modal",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "CoreUI Modal",
   "scripts": {
     "build": "gulp build_tpl && gulp build_js_min && gulp build_js && npm run test_js",

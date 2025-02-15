@@ -163,14 +163,23 @@ class ModalInstance {
         }
 
 
-        let html = ejs.render(ModalTpl['modal.html'], {
+        let modalContainer = $(ejs.render(ModalTpl['modal.html'], {
             id: this.getId(),
             modal: this._options,
-            body: this._options.body ? ModalPrivate.renderContent(this, this._options.body) : ''
-        });
+        }));
+
+        if (this._options.body) {
+            modalContainer.find('.modal-body')
+                .html(ModalPrivate.renderContent(this, this._options.body));
+        }
+
+        if (this._options.footer) {
+            modalContainer.find('.modal-footer')
+                .html(this._options.footer);
+        }
 
 
-        $('body').append(html);
+        $('body').append(modalContainer);
 
 
         modalElement = document.getElementById('coreui-modal-' + this.getId());
