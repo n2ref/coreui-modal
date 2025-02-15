@@ -1,6 +1,6 @@
 
-import coreuiModal from "../coreui.modal";
-
-coreuiModal.lang.ru = {
+let langRu = {
     "loading": "Загрузка...",
 }
+
+export default langRu;

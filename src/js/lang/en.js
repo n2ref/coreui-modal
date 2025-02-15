@@ -1,6 +1,6 @@
 
-import coreuiModal from "../coreui.modal";
-
-coreuiModal.lang.en = {
+let langEn = {
     "loading": "Loading...",
 }
+
+export default langEn;

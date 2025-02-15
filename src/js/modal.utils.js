@@ -1,5 +1,5 @@
 
-let coreuiModalUtils = {
+let ModalUtils = {
 
 
     /**
@@ -47,4 +47,4 @@ let coreuiModalUtils = {
 }
 
 
-export default coreuiModalUtils;
+export default ModalUtils;

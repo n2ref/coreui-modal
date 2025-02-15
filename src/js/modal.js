@@ -1,6 +1,6 @@
-import coreuiModalInstance from "./coreui.modal.instance";
+import ModalInstance from "./modal.instance";
 
-let coreuiModal = {
+let Modal = {
 
     lang: {},
     _instances: {},
@@ -15,13 +15,11 @@ let coreuiModal = {
      */
     create: function (options) {
 
-        let instance = $.extend(true, {}, coreuiModalInstance);
-
         if ( ! options.hasOwnProperty('lang')) {
             options.lang = this.getSetting('lang');
         }
 
-        instance._init(options instanceof Object ? options : {});
+        let instance = new ModalInstance(options instanceof Object ? options : {});
 
         let layoutId = instance.getId();
         this._instances[layoutId] = instance;
@@ -211,4 +209,4 @@ let coreuiModal = {
 }
 
 
-export default coreuiModal;
+export default Modal;

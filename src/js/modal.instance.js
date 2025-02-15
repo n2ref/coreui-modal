@@ -1,13 +1,13 @@
 
 import 'ejs/ejs.min';
-import coreuiModal        from "./coreui.modal";
-import coreuiModalTpl     from "./coreui.modal.templates";
-import coreuiModalUtils   from "./coreui.modal.utils";
-import coreuiModalPrivate from "./coreui.modal.private";
+import modal        from "./modal";
+import ModalTpl     from "./modal.tpl";
+import ModalUtils   from "./modal.utils";
+import ModalPrivate from "./modal.private";
 
-let coreuiModalInstance = {
+class ModalInstance {
 
-    _options: {
+    _options = {
         id: '',
         lang: 'en',
         backdrop: true,
@@ -16,79 +16,82 @@ let coreuiModalInstance = {
         title: null,
         body: null,
         footer: null
-    },
+    };
 
-    _id: '',
-    _modal: null,
-    _events: {},
+    _id     = '';
+    _modal  = null;
+    _events = {};
 
 
     /**
      * Инициализация
-     * @param options
+     * @param {Object} options
      */
-    _init: function (options) {
+     constructor(options) {
 
         this._options = $.extend(true, {}, this._options, options);
         this._id      = this._options.hasOwnProperty('id') && typeof this._options.id === 'string' && this._options.id
             ? this._options.id
-            : coreuiModalUtils.hashCode();
-    },
+            : ModalUtils.hashCode();
+    }
 
 
     /**
      * Получение идентификатора
      * @returns {string}
      */
-    getId: function () {
+    getId() {
         return this._id;
-    },
+    }
 
 
     /**
      * Получение параметров
      * @returns {object}
      */
-    getOptions: function () {
+    getOptions() {
         return $.extend(true, {}, this._options);
-    },
+    }
 
 
     /**
      * Установка содержимого модала
      * @param {string} content
      */
-    setContent: function (content) {
+    setContent(content) {
 
         let container = $('#coreui-modal-' + this.getId() + ' .modal-body');
 
         if (container[0]) {
-            container.html(coreuiModalPrivate.renderContent(this, content));
-            coreuiModalPrivate.trigger(this, 'content_change', this, [ this ]);
+            container.html(ModalPrivate.renderContent(this, content));
+            ModalPrivate.trigger(this, 'content_change', this, [ this ]);
+            
+        } else if (ModalUtils.isObject(content)) {
+            this._options.body = content;
         }
-    },
+    }
 
 
     /**
      Установка заголовка модала
      * @param {string} content
      */
-    setTitle: function (content) {
+    setTitle(content) {
 
         let container = $('#coreui-modal-' + this.getId() + ' .modal-title');
 
         if (container[0]) {
             container.html(content);
-            coreuiModalPrivate.trigger(this, 'title_change', this, [ this ]);
+            ModalPrivate.trigger(this, 'title_change', this, [ this ]);
         }
-    },
+    }
 
 
     /**
      Установка подвала модала
      * @param {string} content
      */
-    setFooter: function (content) {
+    setFooter(content) {
 
         let container = $('#coreui-modal-' + this.getId());
 
@@ -101,23 +104,23 @@ let coreuiModalInstance = {
                 container.find('.modal-content').append('<div class="modal-footer">' + content + '</div>');
             }
 
-            coreuiModalPrivate.trigger(this, 'footer_change', this, [ this ]);
+            ModalPrivate.trigger(this, 'footer_change', this, [ this ]);
         }
-    },
+    }
 
 
     /**
      * Загрузка содержимого модала
      * @param {string} url
      */
-    loadContent: function (url) {
+    loadContent(url) {
 
         let that      = this;
         let container = $('#coreui-modal-' + this.getId() + ' .modal-body');
 
 
         if (container[0]) {
-            let html = ejs.render(coreuiModalTpl['loading.html'], {
+            let html = ejs.render(ModalTpl['loading.html'], {
                 lang: that.getLang()
             });
 
@@ -127,30 +130,31 @@ let coreuiModalInstance = {
                 url: url,
                 method: 'GET',
                 beforeSend: function(xhr) {
-                    coreuiModalPrivate.trigger(that, 'content_load_before', that, [ that, xhr ]);
+                    ModalPrivate.trigger(that, 'content_load_before', that, [ that, xhr ]);
                 },
                 success: function (result) {
-                    container.html(coreuiModalPrivate.renderContent(that, result));
+                    ModalPrivate.trigger(that, 'content_load_success', that, [ that, result ]);
 
-                    coreuiModalPrivate.trigger(that, 'content_load_success', that, [ that, result ]);
-                    coreuiModalPrivate.trigger(that, 'content_change', that, [ that ]);
+                    container.html(ModalPrivate.renderContent(that, result));
+
+                    ModalPrivate.trigger(that, 'content_change', that, [ that ]);
                 },
                 error: function(xhr, textStatus, errorThrown) {
-                    coreuiModalPrivate.trigger(that, 'content_load_error', that, [ that, xhr, textStatus, errorThrown ]);
+                    ModalPrivate.trigger(that, 'content_load_error', that, [ that, xhr, textStatus, errorThrown ]);
                 },
                 complete: function(xhr, textStatus) {
-                    coreuiModalPrivate.trigger(that, 'content_load_complete', that, [ that, xhr, textStatus ]);
+                    ModalPrivate.trigger(that, 'content_load_complete', that, [ that, xhr, textStatus ]);
                 },
             });
         }
-    },
+    }
 
 
     /**
      * Показ модала
      * @return {HTMLElement}
      */
-    show: function() {
+    show() {
 
         let modalElement = document.getElementById('coreui-modal-' + this.getId());
 
@@ -159,10 +163,10 @@ let coreuiModalInstance = {
         }
 
 
-        let html = ejs.render(coreuiModalTpl['modal.html'], {
+        let html = ejs.render(ModalTpl['modal.html'], {
             id: this.getId(),
             modal: this._options,
-            body: this._options.body ? coreuiModalPrivate.renderContent(this, this._options.body) : ''
+            body: this._options.body ? ModalPrivate.renderContent(this, this._options.body) : ''
         });
 
 
@@ -177,21 +181,21 @@ let coreuiModalInstance = {
         let that = this;
 
         modalElement.addEventListener('show.bs.modal', function (e) {
-            coreuiModalPrivate.trigger(that, 'modal_show', that, [ that ]);
+            ModalPrivate.trigger(that, 'modal_show', that, [ that ]);
         });
 
         modalElement.addEventListener('shown.bs.modal', function (e) {
-            coreuiModalPrivate.trigger(that, 'modal_shown', that, [ that ]);
+            ModalPrivate.trigger(that, 'modal_shown', that, [ that ]);
         });
 
         modalElement.addEventListener('hide.bs.modal', function (e) {
-            coreuiModalPrivate.trigger(that, 'modal_hide', that, [ that ]);
+            ModalPrivate.trigger(that, 'modal_hide', that, [ that ]);
         });
 
         modalElement.addEventListener('hidden.bs.modal', function (e) {
             modalElement.remove();
 
-            coreuiModalPrivate.trigger(that, 'modal_hidden', that, [ that ]);
+            ModalPrivate.trigger(that, 'modal_hidden', that, [ that ]);
         });
 
         this._modal.show();
@@ -201,41 +205,41 @@ let coreuiModalInstance = {
         }
 
         return modalElement;
-    },
+    }
 
 
     /**
      * Скрытие модала
      */
-    hide: function () {
+    hide() {
 
         if (this._modal) {
             this._modal.hide();
             this._modal = null;
         }
-    },
+    }
 
 
     /**
      * Удаление модала
      */
-    destruct: function () {
+    destruct() {
 
         $('#coreui-modal-' + this.getId()).remove();
-        delete coreuiModal._instances[this.getId()];
-    },
+        delete modal._instances[this.getId()];
+    }
 
 
     /**
      * Получение настроек языка
      * @private
      */
-    getLang: function () {
+    getLang() {
 
-        return coreuiModal.lang.hasOwnProperty(this._options.lang)
-           ? coreuiModal.lang[this._options.lang]
-           : coreuiModal.lang['en'];
-    },
+        return modal.lang.hasOwnProperty(this._options.lang)
+           ? modal.lang[this._options.lang]
+           : modal.lang['en'];
+    }
 
 
     /**
@@ -245,7 +249,7 @@ let coreuiModalInstance = {
      * @param context
      * @param singleExec
      */
-    on: function(eventName, callback, context, singleExec) {
+    on(eventName, callback, context, singleExec) {
 
         if (typeof this._events[eventName] !== 'object') {
             this._events[eventName] = [];
@@ -260,4 +264,4 @@ let coreuiModalInstance = {
 }
 
 
-export default coreuiModalInstance;
+export default ModalInstance;

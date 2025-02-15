@@ -1,6 +1,6 @@
-import coreuiModalUtils from "./coreui.modal.utils";
+import ModalUtils from "./modal.utils";
 
-let coreuiModalPrivate = {
+let ModalPrivate = {
 
     /**
      * Выполнение события
@@ -54,6 +54,14 @@ let coreuiModalPrivate = {
                 if (typeof data[i] === 'string') {
                     result.push(data[i]);
 
+                } else if (data[i] instanceof Object &&
+                    typeof data[i].render === 'function' &&
+                    typeof data[i].initEvents === 'function'
+                ) {
+                    result.push(data[i].render());
+
+                    modal.on('modal_shown', data[i].initEvents, data[i], true);
+
                 } else {
                     if ( ! Array.isArray(data[i]) &&
                         data[i].hasOwnProperty('component') &&
@@ -62,7 +70,7 @@ let coreuiModalPrivate = {
                         let name = data[i].component.split('.')[1];
 
                         if (CoreUI.hasOwnProperty(name) &&
-                            coreuiModalUtils.isObject(CoreUI[name])
+                            ModalUtils.isObject(CoreUI[name])
                         ) {
                             let instance = CoreUI[name].create(data[i]);
                             result.push(instance.render());
@@ -84,4 +92,4 @@ let coreuiModalPrivate = {
 }
 
 
-export default coreuiModalPrivate;
+export default ModalPrivate;

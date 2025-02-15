@@ -19,15 +19,14 @@ var conf = {
     js: {
         fileMin: 'coreui-modal.min.js',
         file: 'coreui-modal.js',
-        main: 'src/js/main.js',
+        main: 'src/main.js',
         src: 'src/js/**/*.js'
     },
     tpl: {
-        file: 'coreui.modal.templates.js',
+        file: './modal.tpl.js',
         dist: './src/js',
         src: [
             'src/html/**/*.html',
-            'src/html/*.html'
         ]
     },
     css_bootstrap: {
@@ -72,7 +71,7 @@ gulp.task('build_js_min_fast', function() {
     return rollup({
         input: conf.js.main,
         output: {
-            sourcemap: false,
+            sourcemap: true,
             format: 'umd',
             name: "CoreUI.modal"
         },

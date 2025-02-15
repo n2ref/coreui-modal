@@ -1,20 +1,15 @@
 {
   "name": "coreui-modal",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "CoreUI Modal",
   "scripts": {
-    "build_all": "gulp build_tpl && gulp build_js_min && gulp build_js && npm run test_js",
-
-    "build_tpl": "gulp build_tpl",
-    "build_js": "gulp build_tpl && gulp build_js",
-    "build_js_min": "gulp build_tpl && gulp build_js_min",
-
-    "build_watch": "gulp build_watch",
+    "build": "gulp build_tpl && gulp build_js_min && gulp build_js && npm run test_js",
+    "watch": "gulp build_watch",
     "build_bootstrap": "gulp build_bootstrap",
     "test_js": "eslint -c .eslintrc.json --max-warnings 100 --ext .js ./dist"
   },
   "dependencies": {
-    "ejs": "3.1.9"
+    "ejs": "3.1.10"
   },
   "devDependencies": {
     "gulp": "5.0.0",
